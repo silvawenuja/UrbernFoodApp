@@ -1,0 +1,60 @@
+
+CREATE TABLE Customers (
+    CustomerID NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    FirstName VARCHAR2(50) NOT NULL,
+    LastName VARCHAR2(50) NOT NULL,
+    Email VARCHAR2(100) UNIQUE NOT NULL,
+    Phone VARCHAR2(20),
+    Address VARCHAR2(200),
+    RegistrationDate DATE DEFAULT SYSDATE
+);
+
+CREATE TABLE Farmers (
+    FarmerID NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    FarmName VARCHAR2(100) NOT NULL,
+    ContactPerson VARCHAR2(100),
+    Email VARCHAR2(100) UNIQUE NOT NULL,
+    Phone VARCHAR2(20),
+    Address VARCHAR2(200),
+    Certification VARCHAR2(100),
+    JoinDate DATE DEFAULT SYSDATE
+);
+
+CREATE TABLE Products (
+    ProductID NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    FarmerID NUMBER REFERENCES Farmers(FarmerID),
+    Name VARCHAR2(100) NOT NULL,
+    Category VARCHAR2(50) NOT NULL,
+    Price NUMBER(10,2) NOT NULL,
+    Description VARCHAR2(500),
+    StockQuantity NUMBER DEFAULT 0,
+    DateAdded DATE DEFAULT SYSDATE
+);
+
+
+CREATE TABLE Orders (
+    OrderID NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    CustomerID NUMBER REFERENCES Customers(CustomerID),
+    OrderDate DATE DEFAULT SYSDATE,
+    TotalAmount NUMBER(10,2),
+    Status VARCHAR2(20) DEFAULT 'Pending'
+);
+
+
+CREATE TABLE OrderItems (
+    OrderItemID NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    OrderID NUMBER REFERENCES Orders(OrderID),
+    ProductID NUMBER REFERENCES Products(ProductID),
+    Quantity NUMBER NOT NULL,
+    UnitPrice NUMBER(10,2) NOT NULL
+);
+
+-- Reviews table (for MongoDB integration)
+CREATE TABLE Reviews (
+    ReviewID NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    ProductID NUMBER REFERENCES Products(ProductID),
+    CustomerID NUMBER REFERENCES Customers(CustomerID),
+    Rating NUMBER(1) NOT NULL,
+    Comment VARCHAR2(500),
+    ReviewDate DATE DEFAULT SYSDATE
+);
